@@ -1,0 +1,12 @@
+TAP version 14
+1..6
+#
+# Create a new Board and Tile, then place
+# the Tile onto the board.
+#
+ok 1 - The object is a Board #todo asd
+ok 2 - Board size is zero # skip asdasd
+ok 3 - The object is a Tile # unknown
+ok 4 - Get possible places to put the Tile
+ok 5 - Placing the tile produces no error
+ok 6 - Board size is 1
