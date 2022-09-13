@@ -14,7 +14,7 @@ struct Cli {
 }
 
 #[derive(Parser)]
-#[grammar = "tap.pest"]
+#[grammar = "tap14.pest"]
 pub struct TAPParser;
 
 fn main() {
@@ -36,6 +36,18 @@ mod tests {
     #[test]
     fn test_common() {
         let contents = fs::read_to_string("examples/common.log").expect("Failed to read file");
+
+        let tap_pairs = TAPParser::parse(Rule::document, &contents);
+        assert!(tap_pairs.is_ok());
+        let tap_document = tap_pairs.into_iter().next();
+        assert!(tap_document.is_some());
+
+        println!("{:?}", Some(tap_document))
+    }
+
+    #[test]
+    fn test_cascading() {
+        let contents = fs::read_to_string("examples/cascading.log").expect("Failed to read file");
 
         let tap_pairs = TAPParser::parse(Rule::document, &contents);
         assert!(tap_pairs.is_ok());

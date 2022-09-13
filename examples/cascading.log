@@ -1,0 +1,10 @@
+TAP version 14
+1..5 # root
+ok 1 - i'm in root
+# subtest: here begins sub-1
+  2..4 # sub-1
+    3..4 # sub-2
+    ok 3 - i'm in sub-2
+    not ok 4 # SKIP not implemented
+  ok 2 - i'm in sub-1
+ok 5
