@@ -4,6 +4,16 @@
 ARG VARIANT="buster"
 FROM mcr.microsoft.com/vscode/devcontainers/rust:0-${VARIANT}
 
-# [Optional] Uncomment this section to install additional packages.
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-#     && apt-get -y install --no-install-recommends <your-package-list-here>
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends \
+    curl \
+    python3-pip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install --no-cache-dir pre-commit
+
+ARG HADOLINT_VERSION=v2.10.0
+
+RUN curl -sSLo /usr/local/bin/hadolint "https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-$(uname -s)-$(uname -m)" \
+    && chmod +x /usr/local/bin/hadolint
