@@ -1,15 +1,16 @@
 document = ${
-  ^"tap version" ~ WHITESPACE+ ~ version ~ NEWLINE ~
+  preamble ~ NEWLINE ~
   (COMMENT | empty)* ~
   (plan ~ body | body ~ plan)
 }
+preamble = !{ ^"tap version" ~ version }
 
 version = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)* }
 
-plan = { first ~ ".." ~ last ~ WHITESPACE* ~ ("#" ~ WHITESPACE* ~ reason)? ~ NEWLINE? }
+plan = ${ first ~ ".." ~ last ~ WHITESPACE* ~ ("#" ~ WHITESPACE* ~ reason)? }
 first = @{ ASCII_DIGIT+ }
 last = @{ ASCII_DIGIT+ }
-reason = { (!NEWLINE ~ ANY)+ }
+reason = { (!(NEWLINE | EOI) ~ ANY)+ }
 
 body = { statement* }
 statement = _{ empty | subtest | (COMMENT | test | bail_out | pragma | anything) ~ (NEWLINE | EOI) }
@@ -18,7 +19,7 @@ test = ${ result ~ WHITESPACE* ~ number? ~ (WHITESPACE* ~ "-"? ~ WHITESPACE* ~ d
 result = @{ ^"not "? ~ ^"ok" }
 number = @{ ASCII_DIGIT+ }
 key = @{ ^"todo" | ^"skip" }
-description = { !directive ~ text }
+description = { !directive ~ inactive_char+ }
 directive = ${ "#" ~ WHITESPACE* ~ key ~ (WHITESPACE+ ~ reason)? }
 
 bail_out = { ^"bail out!" ~ reason? }
@@ -34,20 +35,18 @@ subtest = ${
     (COMMENT | empty | (PEEK_ALL ~ statement))*
     |
     PUSH(WHITESPACE+) ~ statement ~
-    (COMMENT | empty | (PEEK_ALL ~ statement))* ~
+    (!(PEEK_ALL ~ plan) ~ (COMMENT | empty | (PEEK_ALL ~ statement)))* ~
     PEEK_ALL ~ plan
   ) ~ DROP
 }
 subtest_decl = _{ "#" ~ WHITESPACE* ~ ^"subtest" ~ (":" ~ WHITESPACE* ~ name)? ~ NEWLINE }
-name = @{ text }
+name = @{ inactive_char* }
 
 inactive_char = _{ (LETTER | MARK | NUMBER | SYMBOL | SEPARATOR | ' '..'"' | '%'..'@') } // pretty much everything except '#'
-
-text = _{ inactive_char* }
 
 anything = { (!(NEWLINE | EOI) ~ inactive_char)+ }
 
 empty = _{ WHITESPACE* ~ NEWLINE }
 
 WHITESPACE = _{ " " | "\t" | "\r" }
-COMMENT = _{ !subtest_decl ~ "#" ~ (!NEWLINE ~ text)? }
+COMMENT = _{ !subtest_decl ~ "#" ~ (!NEWLINE ~ inactive_char*)? }
