@@ -24,7 +24,8 @@
         "serayuzgur.crates",
         "tamasfe.even-better-toml",
         "vadimcn.vscode-lldb",
-        "xoronic.pestfile"
+        "xoronic.pestfile",
+        "eamodio.gitlens"
       ]
     }
   },
