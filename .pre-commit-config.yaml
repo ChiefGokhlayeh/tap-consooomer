@@ -13,7 +13,7 @@ repos:
     rev: v2.10.0
     hooks:
       - id: hadolint
-  - repo: https://github.com/doublify/pre-commit-rust
+  - repo: https://github.com/noonsleeper/pre-commit-rust
     rev: v1.0
     hooks:
       - id: cargo-check
