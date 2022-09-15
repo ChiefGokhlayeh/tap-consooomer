@@ -33,3 +33,5 @@ repos:
     hooks:
       - id: check-hooks-apply
       - id: check-useless-excludes
+ci:
+  skip: [cargo-check, fmt]
