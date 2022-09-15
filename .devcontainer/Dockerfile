@@ -12,8 +12,3 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install --no-cache-dir pre-commit
-
-ARG HADOLINT_VERSION=v2.10.0
-
-RUN curl -sSLo /usr/local/bin/hadolint "https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-$(uname -s)-$(uname -m)" \
-    && chmod +x /usr/local/bin/hadolint
