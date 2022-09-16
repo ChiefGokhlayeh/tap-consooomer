@@ -2,8 +2,13 @@ extern crate pest;
 #[macro_use]
 extern crate pest_derive;
 
+use anyhow::{anyhow, Result};
 use clap::Parser as ClapParser;
-use pest::Parser;
+use pest::{
+    iterators::{Pair, Pairs},
+    Parser,
+};
+use serde::Serialize;
 use std::fs;
 
 #[derive(ClapParser, Debug)]
@@ -15,18 +20,282 @@ struct Cli {
 
 #[derive(Parser)]
 #[grammar = "tap14.pest"]
-pub struct TAPParser;
+struct TAPParser;
+
+#[derive(Debug, Serialize)]
+struct Preamble<'a> {
+    version: &'a str,
+}
+
+#[derive(Debug, Serialize)]
+struct Plan<'a> {
+    first: i32,
+    last: i32,
+    reason: Option<&'a str>,
+}
+
+#[derive(Debug, Serialize)]
+struct Body<'a> {
+    statements: Vec<Statement<'a>>,
+}
+
+#[derive(Debug, Serialize)]
+struct Pragma<'a> {
+    key: &'a str,
+}
+
+#[derive(Debug, Serialize)]
+struct BailOut<'a> {
+    reason: Option<&'a str>,
+}
+
+#[derive(Debug, Serialize)]
+enum Key {
+    Skip,
+    Todo,
+}
+
+#[derive(Debug, Serialize)]
+struct Directive<'a> {
+    key: Key,
+    reason: Option<&'a str>,
+}
+
+#[derive(Debug, Serialize)]
+struct Test<'a> {
+    result: bool,
+    number: Option<i32>,
+    description: Option<&'a str>,
+    directive: Option<Directive<'a>>,
+}
+
+#[derive(Debug, Serialize)]
+struct Subtest<'a> {
+    name: Option<&'a str>,
+    plan: Plan<'a>,
+    body: Vec<Statement<'a>>,
+}
+
+#[derive(Debug, Serialize)]
+enum Statement<'a> {
+    Anything(&'a str),
+    BailOut(BailOut<'a>),
+    Pragma(Pragma<'a>),
+    Subtest(Subtest<'a>),
+    Test(Test<'a>),
+}
+
+#[derive(Debug, Serialize)]
+struct Document<'a> {
+    preamble: Preamble<'a>,
+    plan: Plan<'a>,
+    body: Vec<Statement<'a>>,
+}
+
+#[derive(Debug)]
+enum DocumentContent<'a> {
+    Plan(Plan<'a>),
+    Body(Vec<Statement<'a>>),
+}
+
+#[derive(Debug)]
+enum SubtestContent<'a> {
+    Plan(Plan<'a>),
+    Statement(Statement<'a>),
+}
+
+fn parse_preamble(mut pairs: Pairs<Rule>) -> Preamble {
+    Preamble {
+        version: pairs.next().unwrap().as_str(),
+    }
+}
+
+fn parse_plan(mut pairs: Pairs<'_, Rule>) -> Result<Plan<'_>> {
+    Ok(Plan {
+        first: pairs.next().unwrap().as_str().parse()?,
+        last: pairs.next().unwrap().as_str().parse()?,
+        reason: pairs.next().map(|r| r.as_str()),
+    })
+}
+
+fn parse_directive(mut pairs: Pairs<'_, Rule>) -> Result<Directive> {
+    let key = pairs.next().unwrap().as_str().to_lowercase();
+    Ok(Directive {
+        key: match key.as_str() {
+            "skip" => Ok(Key::Skip),
+            "todo" => Ok(Key::Todo),
+            _ => Err(anyhow!("Directive key '{}' must be 'skip' or 'todo'", key)),
+        }?,
+        reason: pairs.next().map(|p| p.as_str()),
+    })
+}
+
+fn parse_test(mut pairs: Pairs<'_, Rule>) -> Result<Test<'_>> {
+    let result = pairs.next().unwrap().as_str().to_lowercase();
+    let number: Option<i32> = pairs.next().map(|p| p.as_str().parse()).transpose()?;
+    let description = pairs.next().map(|p| p.as_str());
+    Ok(Test {
+        result: match result.as_str() {
+            "ok" => Ok(true),
+            "not ok" => Ok(false),
+            _ => Err(anyhow!("Result '{}' must be 'ok' or 'not ok'", result)),
+        }?,
+        number,
+        description,
+        directive: pairs
+            .next()
+            .map(|p| parse_directive(p.into_inner()))
+            .transpose()?,
+    })
+}
+
+fn parse_bail_out(mut pairs: Pairs<'_, Rule>) -> Result<BailOut> {
+    Ok(BailOut {
+        reason: pairs.next().map(|p| p.as_str()),
+    })
+}
+
+fn parse_pragma(mut pairs: Pairs<'_, Rule>) -> Result<Pragma> {
+    Ok(Pragma {
+        key: pairs.next().unwrap().as_str(),
+    })
+}
+
+fn parse_subtest(mut pairs: Pairs<'_, Rule>) -> Result<Subtest> {
+    let pair = pairs.next().unwrap();
+    let name = match pair.as_rule() {
+        Rule::name => Some(pair.as_str()),
+        _ => None,
+    };
+
+    let mut contents = vec![]; /* FIXME: There has to be a better way to split plan and body! */
+
+    /* Consume first pair if not consumed by 'name'. */
+    if name.is_none() {
+        contents.push(match pair.as_rule() {
+            Rule::plan => parse_plan(pair.into_inner()).map(SubtestContent::Plan),
+            _ => parse_statement(pair).map(SubtestContent::Statement),
+        }?)
+    }
+
+    /* Now consume the rest of the pairs. */
+    let mut rest: Vec<SubtestContent> = pairs
+        .map(|p| match p.as_rule() {
+            Rule::plan => parse_plan(p.into_inner()).map(SubtestContent::Plan),
+            _ => parse_statement(p).map(SubtestContent::Statement),
+        })
+        .collect::<Result<Vec<SubtestContent>>>()?;
+    contents.append(&mut rest);
+
+    let mut p = None;
+    let mut i = 0;
+    while i < contents.len() {
+        /* TODO: Use drain_filter once stable. */
+        if matches!(contents[i], SubtestContent::Plan(_)) {
+            p = Some(match contents.remove(i) {
+                SubtestContent::Plan(p) => p,
+                SubtestContent::Statement(_) => unreachable!(),
+            })
+        }
+        i += 1;
+    }
+    let plan = p.unwrap();
+    let body = contents
+        .into_iter()
+        .filter_map(|s| match s {
+            SubtestContent::Plan(_) => None,
+            SubtestContent::Statement(s) => Some(s),
+        })
+        .collect();
+
+    Ok(Subtest { name, plan, body })
+}
+
+fn parse_statement(pair: Pair<Rule>) -> Result<Statement> {
+    match pair.as_rule() {
+        Rule::test => Ok(Statement::Test(parse_test(pair.into_inner())?)),
+        Rule::bail_out => Ok(Statement::BailOut(parse_bail_out(pair.into_inner())?)),
+        Rule::pragma => Ok(Statement::Pragma(parse_pragma(pair.into_inner())?)),
+        Rule::subtest => Ok(Statement::Subtest(parse_subtest(pair.into_inner())?)),
+        Rule::anything => Ok(Statement::Anything(pair.as_str())),
+        _ => unreachable!(),
+    }
+}
+
+fn parse_document_content(content: Pair<Rule>) -> Result<DocumentContent> {
+    Ok(match content.as_rule() {
+        Rule::plan => DocumentContent::Plan(parse_plan(content.into_inner())?),
+        Rule::body => {
+            let statements: Result<Vec<_>> = content.into_inner().map(parse_statement).collect();
+            DocumentContent::Body(statements?)
+        }
+        _ => unreachable!(),
+    })
+}
+
+fn split_contents<'a>(
+    content1: DocumentContent<'a>,
+    content2: DocumentContent<'a>,
+) -> (Plan<'a>, Vec<Statement<'a>>) {
+    let (plan, body) = match content1 {
+        DocumentContent::Plan(p) => (
+            p,
+            match content2 {
+                DocumentContent::Body(b) => b,
+                _ => panic!("Unexpected double 'body'"),
+            },
+        ),
+        DocumentContent::Body(b) => (
+            match content2 {
+                DocumentContent::Plan(p) => p,
+                _ => panic!("Unexpected double 'plan'"),
+            },
+            b,
+        ),
+    };
+    (plan, body)
+}
+
+fn parse_document(pair: Pair<Rule>) -> Result<Document> {
+    match pair.as_rule() {
+        Rule::document => {
+            let mut pairs = pair.into_inner();
+            let preamble = parse_preamble(pairs.next().unwrap().into_inner());
+
+            let content1 = parse_document_content(pairs.next().unwrap())?;
+            let content2 = parse_document_content(pairs.next().unwrap())?;
+            let (plan, body) = split_contents(content1, content2);
+
+            Ok(Document {
+                preamble,
+                plan,
+                body,
+            })
+        }
+        _ => Err(anyhow!("Unexpected '{}'", pair.as_str())),
+    }
+}
+
+fn parse_document_from_str(content: &str) -> Result<Option<Document>> {
+    if let Some(pair) = TAPParser::parse(Rule::document, content)?.next() {
+        parse_document(pair).map(Some)
+    } else {
+        Ok(None)
+    }
+}
 
 fn main() {
     let cli = Cli::parse();
 
-    let contents = fs::read_to_string(cli.tap_file).expect("Failed to read file");
-    let tap_document = TAPParser::parse(Rule::document, &contents)
-        .into_iter()
-        .next()
-        .expect("Failed to parse TAP document");
-
-    println!("{:}", tap_document)
+    let content = fs::read_to_string(&cli.tap_file)
+        .unwrap_or_else(|_| panic!("Failed to read file, {}", &cli.tap_file));
+    if let Some(document) = parse_document_from_str(&content).expect("Failed to parse TAP document")
+    {
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&document).expect("Failed to serialize TAP document")
+        )
+    }
 }
 
 #[cfg(test)]

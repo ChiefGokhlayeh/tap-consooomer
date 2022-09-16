@@ -5,6 +5,7 @@ ok 1 - i'm in root
   2..4 # sub-1
     3..4 # sub-2
     ok 3 - i'm in sub-2
+    This is some random text that has to do nothing with TAP. Could be stdout from the next test ... idk.
     not ok 4 # SKIP not implemented
   ok 2 - i'm in sub-1
 ok 5
