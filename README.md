@@ -28,7 +28,7 @@ OPTIONS:
 
 ## Examples
 
-See [examples](examples) directory for some example TAP logs. To conver them into JSON run:
+See [examples](examples) directory for some example TAP logs. To convert them into JSON run:
 
 ```sh
 ❯ tap-rs examples/common.log
