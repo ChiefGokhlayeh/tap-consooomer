@@ -19,7 +19,7 @@ jobs:
       - name: Load cache
         uses: Swatinem/rust-cache@v2
         with:
-          key: ${{ matrix.target }}
+          key: "${{ matrix.target }}-2"
       - name: Check crate
         uses: actions-rs/cargo@v1
         with:
