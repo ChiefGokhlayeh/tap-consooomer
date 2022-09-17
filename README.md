@@ -128,3 +128,7 @@ Licensed under
 
 - Apache License, Version 2.0
   ([LICENSE](LICENSE) or <http://www.apache.org/licenses/LICENSE-2.0>)
+
+## Limitations
+
+- Embedded YAML blocks are parsed into a list of individual `yaml` lines. These are treated as plain-text and **not** broken down any further. Use any of your favorite [YAML libraries](https://crates.io/search?q=yaml) (like [serde_yaml](https://crates.io/crates/serde_yaml)) to further parse the embedded YAML block. Any indentation preceding the first element is used as the _anchor_ for the entire YAML block _and trimmed off_. Any line separators (`<LF>` or `<CR><LF>`) at the end of any given `yaml` line are omitted. Empty or whitespace-only lines inside the embedded YAML block get removed.

@@ -57,7 +57,7 @@ name = @{ inactive_char* }
 
 yaml_block = ${
   PUSH(WHITESPACE+) ~ yaml_start ~ WHITESPACE* ~ NEWLINE ~
-  (PEEK ~ yaml ~ NEWLINE)* ~
+  (empty | PEEK ~ yaml ~ NEWLINE)* ~
   PEEK ~ yaml_end ~ DROP
 }
 yaml_start = _{ "---" }

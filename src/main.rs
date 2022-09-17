@@ -745,17 +745,18 @@ mod tests {
                 "  YAML line 2\n",
                 "  YAML line 3\n",
                 "  ok 1 - this is considered YAML\n",
+                "        \r\n",
                 "  0..1 # even this is YAML\n",
                 "  ...\n",
             ),
             rule: Rule::yaml_block,
             tokens: [
-                yaml_block(0, 113, [
+                yaml_block(0, 123, [
                     yaml(8, 19),
                     yaml(22, 33),
                     yaml(36, 47),
                     yaml(50, 80),
-                    yaml(83, 107),
+                    yaml(93, 117),
                 ])
             ]
         }
@@ -876,50 +877,50 @@ mod tests {
             input : &contents,
             rule: Rule::document,
             tokens: [
-                document(0, 533, [
+                document(0, 534, [
                     preamble(0, 14, [
                         version(12, 14)
                     ]),
                     plan(15, 31, [
                         first(15, 16), last(18, 19), reason(22, 31)
                     ]),
-                    body(31, 533, [
-                        test(32, 343, [
+                    body(31, 534, [
+                        test(32, 344, [
                             result(32, 38),
                             number(39, 40),
                             description(43, 58),
-                            yaml_block(59, 343, [
+                            yaml_block(59, 344, [
                                 yaml(67, 136),
                                 yaml(139, 153),
                                 yaml(156, 162),
                                 yaml(165, 198),
                                 yaml(201, 213),
-                                yaml(216, 223),
-                                yaml(226, 259),
-                                yaml(262, 288),
-                                yaml(291, 294),
-                                yaml(297, 323),
-                                yaml(326, 337),
+                                yaml(217, 224),
+                                yaml(227, 260),
+                                yaml(263, 289),
+                                yaml(292, 295),
+                                yaml(298, 324),
+                                yaml(327, 338),
                             ])
                         ]),
-                        test(344, 365, [
-                            result(344, 346), number(347, 348), description(351, 365)
+                        test(345, 366, [
+                            result(345, 347), number(348, 349), description(352, 366)
                         ]),
-                        subtest(366, 533, [
-                            name(377, 401),
-                            plan(404, 419, [
-                                first(404, 405), last(407, 408), reason(411, 419)
+                        subtest(367, 534, [
+                            name(378, 402),
+                            plan(405, 420, [
+                                first(405, 406), last(408, 409), reason(412, 420)
                             ]),
-                            test(422, 518, [
-                                result(422, 424),
-                                number(425, 426),
-                                description(429, 443),
-                                yaml_block(444, 518, [
-                                    yaml(460, 508)
+                            test(423, 519, [
+                                result(423, 425),
+                                number(426, 427),
+                                description(430, 444),
+                                yaml_block(445, 519, [
+                                    yaml(461, 509)
                                 ]),
                             ]),
-                            test(521, 532, [
-                                result(521, 523), number(524, 525), description(528, 532)
+                            test(522, 533, [
+                                result(522, 524), number(525, 526), description(529, 533)
                             ])
                         ])
                     ])
