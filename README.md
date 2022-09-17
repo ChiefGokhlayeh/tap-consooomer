@@ -6,17 +6,24 @@
 
 ## Usage
 
-Use tap-rs to convert a TAP14 input file into JSON:
+```txt
+Reads a given Test Anything Protocol (TAP) file and prints the JSON-formatted parser result to
+stdout. If FILE is omitted, TAP input is read from stdin. Parsing only comences after encountering
+an EOF. Only complete TAP files are supported.
 
-```sh
-tap-rs <FILE>
+USAGE:
+    tap-rs [FILE]
 
 ARGS:
     <FILE>
+            Path to TAP input file
 
 OPTIONS:
-    -h, --help       Print help information
-    -V, --version    Print version information
+    -h, --help
+            Print help information
+
+    -V, --version
+            Print version information
 ```
 
 ## Examples
