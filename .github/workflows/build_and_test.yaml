@@ -1,0 +1,20 @@
+name: Build and Test
+on: [push, pull_request]
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: Check crate
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+      - name: Test crate
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
