@@ -3,6 +3,10 @@ on: [push, pull_request]
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x86_64-pc-windows-gnu, x86_64-unknown-linux-gnu]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -10,11 +14,31 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+      - name: Load cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
       - name: Check crate
         uses: actions-rs/cargo@v1
         with:
           command: check
+          args: --target ${{ matrix.target }}
       - name: Test crate
         uses: actions-rs/cargo@v1
         with:
+          use-cross: true
           command: test
+          args: --target ${{ matrix.target }}
+      - name: Build crate
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --target ${{ matrix.target }} --release --all-features
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: "tap-rs-${{ matrix.target }}"
+          path: "target/${{ matrix.target }}/release/tap-rs${{ contains(matrix.target, 'windows') && '.exe' || '' }}"
