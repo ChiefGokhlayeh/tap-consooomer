@@ -31,7 +31,7 @@ OPTIONS:
 See [examples](examples) directory for some example TAP logs. To convert them into JSON run:
 
 ```sh
-❯ tap-rs examples/common.tap
+❯ tap-rs examples/cascading.tap
 ```
 
 The TAP log should be transformed as follows:
@@ -77,15 +77,16 @@ ok 3
   },
   "body": [
     {
-      "Test": {
+      "test": {
         "result": true,
         "number": 1,
         "description": "i'm in root",
-        "directive": null
+        "directive": null,
+        "yaml": []
       }
     },
     {
-      "Subtest": {
+      "subtest": {
         "name": "here begins sub-1",
         "plan": {
           "first": 2,
@@ -94,22 +95,24 @@ ok 3
         },
         "body": [
           {
-            "Test": {
+            "test": {
               "result": true,
               "number": 2,
               "description": "i'm in sub-1",
-              "directive": null
+              "directive": null,
+              "yaml": []
             }
           }
         ]
       }
     },
     {
-      "Test": {
+      "test": {
         "result": true,
         "number": 3,
         "description": null,
-        "directive": null
+        "directive": null,
+        "yaml": []
       }
     }
   ]

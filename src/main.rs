@@ -88,10 +88,15 @@ struct Subtest<'a> {
 
 #[derive(Debug, Serialize)]
 enum Statement<'a> {
+    #[serde(rename = "anything")]
     Anything(&'a str),
+    #[serde(rename = "bail_out")]
     BailOut(BailOut<'a>),
+    #[serde(rename = "pragma")]
     Pragma(Pragma<'a>),
+    #[serde(rename = "subtest")]
     Subtest(Subtest<'a>),
+    #[serde(rename = "test")]
     Test(Test<'a>),
 }
 
