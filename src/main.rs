@@ -821,35 +821,36 @@ mod tests {
             input : &contents,
             rule: Rule::document,
             tokens: [
-                document(0, 194, [
+                document(0, 300, [
                     preamble(0, 14, [
                         version(12, 14)
                     ]),
                     plan(15, 26, [
                         first(15, 16), last(18, 19), reason(22, 26)
                     ]),
-                    body(26, 194, [
+                    body(26, 300, [
                         test(27, 45, [
                             result(27, 29), number(30, 31), description(34, 45)
                         ]),
-                        subtest(46, 189, [
+                        subtest(46, 295, [
                             name(57, 74),
                             plan(77, 89, [
                                 first(77, 78), last(80, 81), reason(84, 89)
                             ]),
-                            subtest(92, 167, [
+                            subtest(92, 273, [
                                 plan(94, 106, [
                                     first(94, 95), last(97, 98), reason(101, 106)
                                 ]),
                                 test(111, 130, [
                                     result(111, 113), number(114, 115), description(118, 130)
                                 ]),
-                                test(135, 166, [
-                                    result(135, 141),
-                                    number(142, 143),
-                                    directive(144, 166, [
-                                        key(146, 150),
-                                        reason(151, 166)
+                                anything(135, 236),
+                                test(241, 272, [
+                                    result(241, 247),
+                                    number(248, 249),
+                                    directive(250, 272, [
+                                        key(252, 256),
+                                        reason(257, 272)
                                     ])
                                 ])
                             ]),
