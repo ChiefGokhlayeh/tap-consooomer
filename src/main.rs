@@ -76,6 +76,7 @@ struct Test<'a> {
     number: Option<i32>,
     description: Option<&'a str>,
     directive: Option<Directive<'a>>,
+    yaml: Vec<&'a str>,
 }
 
 #[derive(Debug, Serialize)]
@@ -139,22 +140,39 @@ fn parse_directive(mut pairs: Pairs<'_, Rule>) -> Result<Directive> {
     })
 }
 
+fn parse_yaml_block(pairs: Pairs<'_, Rule>) -> Vec<&'_ str> {
+    pairs.map(|p| p.as_str()).collect()
+}
+
 fn parse_test(mut pairs: Pairs<'_, Rule>) -> Result<Test<'_>> {
-    let result = pairs.next().unwrap().as_str().to_lowercase();
-    let number: Option<i32> = pairs.next().map(|p| p.as_str().parse()).transpose()?;
-    let description = pairs.next().map(|p| p.as_str());
+    let pair = pairs.next().unwrap();
+    let result = match pair.as_str().to_lowercase().as_str() {
+        "ok" => Ok(true),
+        "not ok" => Ok(false),
+        _ => Err(anyhow!(
+            "Result '{}' must be 'ok' or 'not ok'",
+            pair.as_str()
+        )),
+    }?;
+    let mut number: Option<i32> = None;
+    let mut description = None;
+    let mut directive = None;
+    let mut yaml = Vec::new();
+    for pair in pairs {
+        match pair.as_rule() {
+            Rule::number => number = pair.as_str().parse::<i32>().ok(),
+            Rule::description => description = Some(pair.as_str()),
+            Rule::directive => directive = parse_directive(pair.into_inner()).ok(),
+            Rule::yaml_block => yaml.append(&mut parse_yaml_block(pair.into_inner())),
+            _ => unreachable!(),
+        };
+    }
     Ok(Test {
-        result: match result.as_str() {
-            "ok" => Ok(true),
-            "not ok" => Ok(false),
-            _ => Err(anyhow!("Result '{}' must be 'ok' or 'not ok'", result)),
-        }?,
+        result,
         number,
         description,
-        directive: pairs
-            .next()
-            .map(|p| parse_directive(p.into_inner()))
-            .transpose()?,
+        directive,
+        yaml,
     })
 }
 
@@ -718,6 +736,32 @@ mod tests {
     }
 
     #[test]
+    fn test_yaml_block() {
+        parses_to! {
+            parser: TAPParser,
+            input : concat!(
+                "  ---\n",
+                "  YAML line 1\n",
+                "  YAML line 2\n",
+                "  YAML line 3\n",
+                "  ok 1 - this is considered YAML\n",
+                "  0..1 # even this is YAML\n",
+                "  ...\n",
+            ),
+            rule: Rule::yaml_block,
+            tokens: [
+                yaml_block(0, 113, [
+                    yaml(8, 19),
+                    yaml(22, 33),
+                    yaml(36, 47),
+                    yaml(50, 80),
+                    yaml(83, 107),
+                ])
+            ]
+        }
+    }
+
+    #[test]
     fn test_common() {
         let contents = fs::read_to_string("examples/common.tap").expect("Failed to read file");
 
@@ -809,13 +853,74 @@ mod tests {
                                     ])
                                 ])
                             ]),
-                            test(169, 188, [
-                                result(169, 171), number(172, 173), description(176, 188)
+                            test(275, 294, [
+                                result(275, 277), number(278, 279), description(282, 294)
                             ])
                         ]),
-                        test(189, 193, [
-                            result(189, 191), number(192, 193),
+                        test(295, 299, [
+                            result(295, 297), number(298, 299),
                         ]),
+                    ])
+                ])
+            ]
+        }
+    }
+
+    #[test]
+    fn test_yaml() {
+        let contents = fs::read_to_string("examples/yaml.tap").expect("Failed to read file");
+
+        parses_to! {
+            parser: TAPParser,
+            input : &contents,
+            rule: Rule::document,
+            tokens: [
+                document(0, 533, [
+                    preamble(0, 14, [
+                        version(12, 14)
+                    ]),
+                    plan(15, 31, [
+                        first(15, 16), last(18, 19), reason(22, 31)
+                    ]),
+                    body(31, 533, [
+                        test(32, 343, [
+                            result(32, 38),
+                            number(39, 40),
+                            description(43, 58),
+                            yaml_block(59, 343, [
+                                yaml(67, 136),
+                                yaml(139, 153),
+                                yaml(156, 162),
+                                yaml(165, 198),
+                                yaml(201, 213),
+                                yaml(216, 223),
+                                yaml(226, 259),
+                                yaml(262, 288),
+                                yaml(291, 294),
+                                yaml(297, 323),
+                                yaml(326, 337),
+                            ])
+                        ]),
+                        test(344, 365, [
+                            result(344, 346), number(347, 348), description(351, 365)
+                        ]),
+                        subtest(366, 533, [
+                            name(377, 401),
+                            plan(404, 419, [
+                                first(404, 405), last(407, 408), reason(411, 419)
+                            ]),
+                            test(422, 518, [
+                                result(422, 424),
+                                number(425, 426),
+                                description(429, 443),
+                                yaml_block(444, 518, [
+                                    yaml(460, 508)
+                                ]),
+                            ]),
+                            test(521, 532, [
+                                result(521, 523), number(524, 525), description(528, 532)
+                            ])
+                        ])
                     ])
                 ])
             ]

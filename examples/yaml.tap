@@ -1,0 +1,24 @@
+TAP version 14
+1..4 # with YAML
+not ok 1 - Resolve address
+  ---
+  message: "Failed with error 'hostname peebles.example.com not found'"
+  severity: fail
+  found:
+    hostname: 'peebles.example.com'
+    address: ~
+  wanted:
+    hostname: 'peebles.example.com'
+    address: '85.193.201.85'
+  at:
+    file: test/dns-resolve.c
+    line: 142
+  ...
+ok 2 - Something else
+# Subtest: testing YAML in subtests
+  1..2 # in sub-1
+  ok 1 - la-di-da-di-du
+      ---
+      message: "number indentations are not important"
+      ...
+  ok 2 - done

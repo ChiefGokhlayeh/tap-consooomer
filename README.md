@@ -128,7 +128,3 @@ Licensed under
 
 - Apache License, Version 2.0
   ([LICENSE](LICENSE) or <http://www.apache.org/licenses/LICENSE-2.0>)
-
-## Limitations
-
-- Embedded YAML is currently not supported. Any YAML code present will be treated `anything`.

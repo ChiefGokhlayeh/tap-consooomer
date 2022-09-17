@@ -26,7 +26,8 @@ statement = _{
 test = ${
   result ~ WHITESPACE* ~ number? ~
   (WHITESPACE* ~ "-"? ~ WHITESPACE* ~ description)? ~
-  WHITESPACE* ~ directive? ~ WHITESPACE* ~ COMMENT?
+  WHITESPACE* ~ directive? ~ WHITESPACE* ~ COMMENT? ~
+  (NEWLINE ~ yaml_block)?
 }
 result = @{ ^"not "? ~ ^"ok" }
 number = @{ ASCII_DIGIT+ }
@@ -53,6 +54,15 @@ subtest = ${
 }
 subtest_decl = _{ "#" ~ WHITESPACE* ~ ^"subtest" ~ (":" ~ WHITESPACE* ~ name)? ~ NEWLINE }
 name = @{ inactive_char* }
+
+yaml_block = ${
+  PUSH(WHITESPACE+) ~ yaml_start ~ WHITESPACE* ~ NEWLINE ~
+  (PEEK ~ yaml ~ NEWLINE)* ~
+  PEEK ~ yaml_end ~ DROP
+}
+yaml_start = _{ "---" }
+yaml = { !yaml_end ~ (inactive_char | "#")* }
+yaml_end = _{ "..." }
 
 inactive_char = _{ (LETTER | MARK | NUMBER | SYMBOL | SEPARATOR | ' '..'"' | '%'..'@') } // pretty much everything except '#'
 
