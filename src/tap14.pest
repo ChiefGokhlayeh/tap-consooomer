@@ -10,12 +10,24 @@ version = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)* }
 plan = ${ first ~ ".." ~ last ~ WHITESPACE* ~ ("#" ~ WHITESPACE* ~ reason)? }
 first = @{ ASCII_DIGIT+ }
 last = @{ ASCII_DIGIT+ }
-reason = { (!(NEWLINE | EOI) ~ ANY)+ }
+reason = { (inactive_char)+ }
 
 body = { statement* }
-statement = _{ empty | subtest | (COMMENT | test | bail_out | pragma | anything) ~ (NEWLINE | EOI) }
+statement = _{
+  empty |
+  subtest |
+  test |
+  bail_out |
+  pragma |
+  anything |
+  COMMENT
+}
 
-test = ${ result ~ WHITESPACE* ~ number? ~ (WHITESPACE* ~ "-"? ~ WHITESPACE* ~ description)? ~ WHITESPACE* ~ directive? ~ WHITESPACE* ~ COMMENT? }
+test = ${
+  result ~ WHITESPACE* ~ number? ~
+  (WHITESPACE* ~ "-"? ~ WHITESPACE* ~ description)? ~
+  WHITESPACE* ~ directive? ~ WHITESPACE* ~ COMMENT?
+}
 result = @{ ^"not "? ~ ^"ok" }
 number = @{ ASCII_DIGIT+ }
 key = @{ ^"todo" | ^"skip" }
@@ -44,7 +56,7 @@ name = @{ inactive_char* }
 
 inactive_char = _{ (LETTER | MARK | NUMBER | SYMBOL | SEPARATOR | ' '..'"' | '%'..'@') } // pretty much everything except '#'
 
-anything = { (!(NEWLINE | EOI) ~ inactive_char)+ }
+anything = { (!plan ~ inactive_char)+ }
 
 empty = _{ WHITESPACE* ~ NEWLINE }
 
