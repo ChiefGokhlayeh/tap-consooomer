@@ -1,6 +1,6 @@
 # 📦 tap-rs
 
-[![crate status: WIP](https://img.shields.io/badge/crate-WIP-blue)](https://github.com/ChiefGokhlayeh/tap-rs) [![Build and Test](https://github.com/ChiefGokhlayeh/tap-rs/actions/workflows/build_and_test.yaml/badge.svg)](https://github.com/ChiefGokhlayeh/tap-rs/actions/workflows/build_and_test.yaml) [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ChiefGokhlayeh/tap-rs/main.svg)](https://results.pre-commit.ci/latest/github/ChiefGokhlayeh/tap-rs/main)
+[![crate status: WIP](https://img.shields.io/badge/crate-WIP-blue)](https://github.com/ChiefGokhlayeh/tap-rs) [![Build and Test](https://github.com/ChiefGokhlayeh/tap-rs/actions/workflows/build_and_test.yaml/badge.svg)](https://github.com/ChiefGokhlayeh/tap-rs/actions/workflows/build_and_test.yaml) [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ChiefGokhlayeh/tap-rs/main.svg)](https://results.pre-commit.ci/latest/github/ChiefGokhlayeh/tap-rs/main) [![codecov](https://codecov.io/gh/ChiefGokhlayeh/tap-rs/branch/main/graph/badge.svg?token=0WTJX09WD8)](https://codecov.io/gh/ChiefGokhlayeh/tap-rs)
 
 [Test Anything Protocol (TAP)](https://testanything.org/) Consumer for Rust. Capable of parsing [TAP14](https://testanything.org/tap-version-14-specification.html) files into [pest](https://github.com/pest-parser/pest) tokens.
 
