@@ -719,7 +719,7 @@ mod tests {
 
     #[test]
     fn test_common() {
-        let contents = fs::read_to_string("examples/common.log").expect("Failed to read file");
+        let contents = fs::read_to_string("examples/common.tap").expect("Failed to read file");
 
         parses_to! {
             parser: TAPParser,
@@ -770,7 +770,7 @@ mod tests {
 
     #[test]
     fn test_cascading() {
-        let contents = fs::read_to_string("examples/cascading.log").expect("Failed to read file");
+        let contents = fs::read_to_string("examples/cascading.tap").expect("Failed to read file");
 
         parses_to! {
             parser: TAPParser,

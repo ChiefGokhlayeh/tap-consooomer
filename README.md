@@ -31,7 +31,7 @@ OPTIONS:
 See [examples](examples) directory for some example TAP logs. To convert them into JSON run:
 
 ```sh
-❯ tap-rs examples/common.log
+❯ tap-rs examples/common.tap
 ```
 
 The TAP log should be transformed as follows:

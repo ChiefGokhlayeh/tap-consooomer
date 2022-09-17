@@ -19,13 +19,14 @@
       },
 
       "extensions": [
+        "eamodio.gitlens",
         "mutantdino.resourcemonitor",
+        "numaru.vscode-tap",
         "rust-lang.rust-analyzer",
         "serayuzgur.crates",
         "tamasfe.even-better-toml",
         "vadimcn.vscode-lldb",
-        "xoronic.pestfile",
-        "eamodio.gitlens"
+        "xoronic.pestfile"
       ]
     }
   },
