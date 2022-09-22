@@ -50,7 +50,8 @@ struct Body<'a> {
 
 #[derive(Debug, Serialize)]
 struct Pragma<'a> {
-    key: &'a str,
+    flag: Option<bool>,
+    option: &'a str,
 }
 
 #[derive(Debug, Serialize)]
@@ -188,8 +189,21 @@ fn parse_bail_out(mut pairs: Pairs<'_, Rule>) -> Result<BailOut> {
 }
 
 fn parse_pragma(mut pairs: Pairs<'_, Rule>) -> Result<Pragma> {
+    let mut pair = pairs.next().unwrap();
+    let flag = match pair.as_rule() {
+        Rule::flag => {
+            pair = pairs.next().unwrap();
+            match pair.as_str() {
+                "+" => Some(true),
+                "-" => Some(false),
+                _ => unreachable!(),
+            }
+        }
+        _ => None,
+    };
     Ok(Pragma {
-        key: pairs.next().unwrap().as_str(),
+        flag,
+        option: pairs.next().unwrap().as_str(),
     })
 }
 
@@ -612,7 +626,7 @@ mod tests {
             rule: Rule::pragma,
             tokens: [
                 pragma(0, 14, [
-                    pragma_key(8, 14)
+                    flag(7, 8), option(8, 14)
                 ])
             ]
         }
@@ -626,7 +640,21 @@ mod tests {
             rule: Rule::pragma,
             tokens: [
                 pragma(0, 14, [
-                    pragma_key(8, 14)
+                    flag(7, 8), option(8, 14)
+                ])
+            ]
+        }
+    }
+
+    #[test]
+    fn test_pragma_no_flag() {
+        parses_to! {
+            parser: TAPParser,
+            input : "pragma allow_anything",
+            rule: Rule::pragma,
+            tokens: [
+                pragma(0, 21, [
+                    option(7, 21)
                 ])
             ]
         }

@@ -37,8 +37,9 @@ directive = ${ "#" ~ WHITESPACE* ~ key ~ (WHITESPACE+ ~ reason)? }
 
 bail_out = { ^"bail out!" ~ reason? }
 
-pragma = { ^"pragma " ~ ("+" | "-") ~ pragma_key ~ NEWLINE? }
-pragma_key = { ASCII_ALPHANUMERIC+ ~ (ASCII_ALPHANUMERIC | "_" | "-")* }
+pragma = { ^"pragma " ~ flag? ~ option ~ NEWLINE? }
+flag = { "+" | "-" }
+option = { ASCII_ALPHANUMERIC+ ~ (ASCII_ALPHANUMERIC | "_" | "-")* }
 
 subtest = ${
   subtest_decl? ~
