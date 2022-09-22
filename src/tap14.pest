@@ -64,7 +64,16 @@ yaml_start = _{ "---" }
 yaml = { !yaml_end ~ (inactive_char | "#")* }
 yaml_end = _{ "..." }
 
-inactive_char = _{ (LETTER | MARK | NUMBER | SYMBOL | SEPARATOR | ' '..'"' | '%'..'@') } // pretty much everything except '#'
+inactive_char = _{
+  (
+    LETTER |
+    MARK |
+    NUMBER |
+    SYMBOL |
+    SEPARATOR |
+    ' '..'"' | '%'..'@' | '['..'`' | '{'..'~'
+  ) // pretty much everything except '#'
+}
 
 anything = { (!plan ~ inactive_char)+ }
 
