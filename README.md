@@ -12,7 +12,7 @@ stdout. If FILE is omitted, TAP input is read from stdin. Parsing only comences 
 an EOF. Only complete TAP files are supported.
 
 USAGE:
-    tap-rs [FILE]
+    tap [FILE]
 
 ARGS:
     <FILE>
