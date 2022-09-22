@@ -1,0 +1,8 @@
+TAP version 13
+1..1
+# Starting 1 tests from 2 test cases.
+#  RUN           move_mount_set_group.complex_sharing_copying ...
+#            OK  move_mount_set_group.complex_sharing_copying
+ok 1 move_mount_set_group.complex_sharing_copying
+# PASSED: 1 / 1 tests passed.
+# Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
