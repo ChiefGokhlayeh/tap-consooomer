@@ -653,26 +653,6 @@ impl<'a> DocumentContent<'a> {
             _ => unreachable!(),
         })
     }
-
-    fn split_contents(content1: Self, content2: Self) -> (Plan<'a>, Vec<Statement<'a>>) {
-        let (plan, body) = match content1 {
-            Self::Plan(p) => (
-                p,
-                match content2 {
-                    Self::Body(b) => b,
-                    _ => panic!("Unexpected double 'body'"),
-                },
-            ),
-            Self::Body(b) => (
-                match content2 {
-                    Self::Plan(p) => p,
-                    _ => panic!("Unexpected double 'plan'"),
-                },
-                b,
-            ),
-        };
-        (plan, body)
-    }
 }
 
 impl<'a> Document<'a> {
@@ -681,7 +661,11 @@ impl<'a> Document<'a> {
 
         let content1 = DocumentContent::parse(pairs.next().unwrap())?;
         let content2 = DocumentContent::parse(pairs.next().unwrap())?;
-        let (plan, body) = DocumentContent::split_contents(content1, content2);
+        let (plan, body) = match (content1, content2) {
+            (DocumentContent::Plan(p), DocumentContent::Body(b)) => (p, b),
+            (DocumentContent::Body(b), DocumentContent::Plan(p)) => (p, b),
+            _ => unreachable!(),
+        };
 
         Ok(Self {
             preamble,
