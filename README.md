@@ -46,7 +46,7 @@ The TAP log should be transformed as follows:
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr align="left">
 <td>
 
 ```tap
