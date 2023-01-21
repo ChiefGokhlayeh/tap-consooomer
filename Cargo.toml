@@ -10,7 +10,7 @@ keywords = ["tap", "test-anything-protocol"]
 
 [dependencies]
 anyhow = "1.0.65"
-clap = { version = "3.2.20", features = ["derive"] }
+clap = { version = "4.1.1", features = ["derive"] }
 pest = "2.3.1"
 pest_derive = "2.3.1"
 serde = { version = "1.0.144", features = ["derive"] }
