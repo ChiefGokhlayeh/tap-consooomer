@@ -91,7 +91,7 @@ pub struct Test<'a> {
     pub yaml: Yaml<'a>,
 }
 
-/// [`Subtest`]s provide a way to nest one TAP14 stream inside another. This may be used in a variaty of ways, depending on
+/// [`Subtest`]s provide a way to nest one TAP14 stream inside another. This may be used in a variety of ways, depending on
 /// the test harness.
 #[derive(Debug, Serialize)]
 pub struct Subtest<'a> {
