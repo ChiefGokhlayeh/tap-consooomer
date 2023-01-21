@@ -5,7 +5,15 @@ authors = ["Andreas Baulig <free.geronimo@hotmail.de>"]
 edition = "2018"
 rust-version = "1.64.0"
 description = "Parse Test Anything Protocol (TAP) files"
+repository = "https://github.com/ChiefGokhlayeh/tap-consooomer"
+license = "Apache-2.0"
 keywords = ["tap", "test-anything-protocol"]
+categories = [
+    "command-line-utilities",
+    "development-tools",
+    "development-tools::testing",
+    "parsing",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
