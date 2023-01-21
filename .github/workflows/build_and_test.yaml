@@ -25,6 +25,16 @@ jobs:
         with:
           command: check
           args: --target ${{ matrix.target }}
+      - name: Install cargo-msrv
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cargo-msrv
+      - name: Verify MSRV
+        uses: actions-rs/cargo@v1
+        with:
+          command: msrv
+          args: verify
       - name: Test crate
         uses: actions-rs/cargo@v1
         with:
