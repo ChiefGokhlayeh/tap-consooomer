@@ -163,7 +163,7 @@ impl<'a> Preamble<'a> {
     /// Parsing a TAP version 14 preamble may look like this:
     ///
     /// ```
-    /// use tap::Preamble;
+    /// use tapconsooomer::Preamble;
     ///
     /// let content = "TAP version 14";
     /// let preamble = Preamble::parse_from_str(content).expect("Parser error");
@@ -173,7 +173,7 @@ impl<'a> Preamble<'a> {
     /// Semantic versioning is supported aswell:
     ///
     /// ```
-    /// use tap::Preamble;
+    /// use tapconsooomer::Preamble;
     ///
     /// let content = "TAP version 13.1";
     /// let preamble = Preamble::parse_from_str(content).expect("Parser error");
@@ -204,7 +204,7 @@ impl<'a> Plan<'a> {
     /// Parsing a TAP plan may look like this:
     ///
     /// ```
-    /// use tap::Plan;
+    /// use tapconsooomer::Plan;
     ///
     /// let content = "1..5 # TODO: Test 3 may fail";
     /// let plan = Plan::parse_from_str(content).expect("Parser error");
@@ -216,7 +216,7 @@ impl<'a> Plan<'a> {
     /// Note, [`Plan::reason`] is optional:
     ///
     /// ```
-    /// use tap::Plan;
+    /// use tapconsooomer::Plan;
     ///
     /// let content = "1..5";
     /// let plan = Plan::parse_from_str(content).expect("Parser error");
@@ -253,8 +253,8 @@ impl<'a> Directive<'a> {
     /// Parsing a TAP directive may look like this:
     ///
     /// ```
-    /// use tap::Directive;
-    /// use tap::Key;
+    /// use tapconsooomer::Directive;
+    /// use tapconsooomer::Key;
     ///
     /// let content = "# SKIP hardware requirements not met";
     /// let directive = Directive::parse_from_str(content).expect("Parser error");
@@ -265,8 +265,8 @@ impl<'a> Directive<'a> {
     /// Note, [`Directive::reason`] is optional:
     ///
     /// ```
-    /// use tap::Directive;
-    /// use tap::Key;
+    /// use tapconsooomer::Directive;
+    /// use tapconsooomer::Key;
     ///
     /// let content = "# TODO";
     /// let directive = Directive::parse_from_str(content).expect("Parser error");
@@ -324,7 +324,7 @@ impl<'a> Test<'a> {
     /// Parsing a TAP test may look like this:
     ///
     /// ```
-    /// use tap::Test;
+    /// use tapconsooomer::Test;
     ///
     /// let content = "not ok 1 - foo()";
     /// let test = Test::parse_from_str(content).expect("Parser error");
@@ -338,7 +338,7 @@ impl<'a> Test<'a> {
     /// Note, many attributes of a TAP test are optional. A minimal TAP test may look like this:
     ///
     /// ```
-    /// use tap::Test;
+    /// use tapconsooomer::Test;
     ///
     /// let content = "ok";
     /// let test = Test::parse_from_str(content).expect("Parser error");
@@ -353,7 +353,7 @@ impl<'a> Test<'a> {
     /// parser captures each line inside the YAML block in a [`Vec`]:
     ///
     /// ```
-    /// use tap::Test;
+    /// use tapconsooomer::Test;
     ///
     /// let content = concat!(
     ///     "not ok 2 - bar()\n",
@@ -393,7 +393,7 @@ impl<'a> BailOut<'a> {
     /// Parsing a TAP bail-out may look like this:
     ///
     /// ```
-    /// use tap::BailOut;
+    /// use tapconsooomer::BailOut;
     ///
     /// let content = "Bail out! Hardware overheating";
     /// let bail_out = BailOut::parse_from_str(content).expect("Parser error");
@@ -403,7 +403,7 @@ impl<'a> BailOut<'a> {
     /// Note, [`BailOut::reason`] is optional:
     ///
     /// ```
-    /// use tap::BailOut;
+    /// use tapconsooomer::BailOut;
     ///
     /// let content = "Bail out!";
     /// let bail_out = BailOut::parse_from_str(content).expect("Parser error");
@@ -447,7 +447,7 @@ impl<'a> Pragma<'a> {
     /// Parsing a TAP pragma may look like this:
     ///
     /// ```
-    /// use tap::Pragma;
+    /// use tapconsooomer::Pragma;
     ///
     /// let content = "pragma +strict";
     /// let pragma = Pragma::parse_from_str(content).expect("Parser error");
@@ -458,7 +458,7 @@ impl<'a> Pragma<'a> {
     /// Note, [`Pragma::flag`] is optional:
     ///
     /// ```
-    /// use tap::Pragma;
+    /// use tapconsooomer::Pragma;
     ///
     /// let content = "pragma foo";
     /// let pragma = Pragma::parse_from_str(content).expect("Parser error");
@@ -532,7 +532,7 @@ impl<'a> Subtest<'a> {
     /// Parsing a TAP subtest may look like this:
     ///
     /// ```
-    /// use tap::Subtest;
+    /// use tapconsooomer::Subtest;
     ///
     /// let content = concat!(
     ///     "# Subtest: foo\n",
@@ -550,7 +550,7 @@ impl<'a> Subtest<'a> {
     /// Note, the comment declaring [`Subtest::name`] is optional:
     ///
     /// ```
-    /// use tap::Subtest;
+    /// use tapconsooomer::Subtest;
     ///
     /// let content = concat!(
     ///     "  1..4\n",
@@ -569,7 +569,7 @@ impl<'a> Subtest<'a> {
     /// So is the order in which [`Plan`] and [`Body`] are declared:
     ///
     /// ```
-    /// use tap::Subtest;
+    /// use tapconsooomer::Subtest;
     ///
     /// let content = concat!(
     ///     "  ok 1 - hello world\n",
@@ -609,7 +609,7 @@ impl<'a> Statement<'a> {
     /// Parsing a TAP statement may look like this:
     ///
     /// ```
-    /// use tap::Statement;
+    /// use tapconsooomer::Statement;
     ///
     /// let test = "ok 1 - foo::bar()";
     /// let stmt = Statement::parse_from_str(test).expect("Parser error");
@@ -681,7 +681,7 @@ impl<'a> Document<'a> {
     /// Parsing a TAP document may look like this:
     ///
     /// ```
-    /// use tap::Document;
+    /// use tapconsooomer::Document;
     ///
     /// let content = concat!(
     ///     "TAP version 14\n",
@@ -696,7 +696,7 @@ impl<'a> Document<'a> {
     /// The order in which [`Body`] and [`Plan`] are declared is unimportant:
     ///
     /// ```
-    /// use tap::Document;
+    /// use tapconsooomer::Document;
     ///
     /// let content = concat!(
     ///     "TAP version 14\n",

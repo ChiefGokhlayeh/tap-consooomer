@@ -40,5 +40,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: "tap-rs-${{ matrix.target }}"
-          path: "target/${{ matrix.target }}/release/tap-rs${{ contains(matrix.target, 'windows') && '.exe' || '' }}"
+          name: "tap-consooomer-${{ matrix.target }}"
+          path: "target/${{ matrix.target }}/release/tap${{ contains(matrix.target, 'windows') && '.exe' || '' }}"

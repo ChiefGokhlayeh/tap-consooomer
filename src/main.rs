@@ -32,7 +32,8 @@ fn main() {
             fs::read_to_string(&file).unwrap_or_else(|_| panic!("Failed to read file, {}", &file))
         },
     );
-    let document = tap::Document::parse_from_str(&content).expect("Failed to parse TAP document");
+    let document =
+        tapconsooomer::Document::parse_from_str(&content).expect("Failed to parse TAP document");
     println!(
         "{}",
         serde_json::to_string_pretty(&document).expect("Failed to serialize TAP document")
