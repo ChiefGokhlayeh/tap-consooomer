@@ -3,6 +3,7 @@ name = "tap-consooomer"
 version = "0.1.0"
 authors = ["Andreas Baulig <free.geronimo@hotmail.de>"]
 edition = "2018"
+rust-version = "1.64.0"
 description = "Parse Test Anything Protocol (TAP) files"
 keywords = ["tap", "test-anything-protocol"]
 
