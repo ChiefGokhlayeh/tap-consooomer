@@ -19,7 +19,7 @@ categories = [
 
 [dependencies]
 anyhow = "1.0.72"
-clap = { version = "4.3.14", features = ["derive"] }
+clap = { version = "4.3.19", features = ["derive"] }
 pest = "2.7.1"
 pest_derive = "2.7.1"
 serde = { version = "1.0.175", features = ["derive"] }
