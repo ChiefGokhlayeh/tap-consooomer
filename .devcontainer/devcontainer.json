@@ -32,5 +32,8 @@
     }
   },
   "remoteUser": "vscode",
-  "onCreateCommand": "pre-commit install --install-hooks"
+  "onCreateCommand": "pre-commit install --install-hooks",
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/pre-commit:2": {}
+  }
 }
