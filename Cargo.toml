@@ -23,7 +23,7 @@ clap = { version = "4.4.18", features = ["derive"] }
 pest = "2.7.7"
 pest_derive = "2.7.7"
 serde = { version = "1.0.196", features = ["derive"] }
-serde_json = "1.0.113"
+serde_json = "1.0.114"
 
 [lib]
 name = "tapconsooomer"
