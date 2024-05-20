@@ -18,7 +18,7 @@ categories = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.82"
+anyhow = "1.0.86"
 clap = { version = "4.5.4", features = ["derive"] }
 pest = "2.7.9"
 pest_derive = "2.7.9"
