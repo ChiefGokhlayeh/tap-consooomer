@@ -22,7 +22,7 @@ anyhow = "1.0.98"
 clap = { version = "4.5.44", features = ["derive"] }
 pest = "2.7.14"
 pest_derive = "2.7.14"
-serde = { version = "1.0.219", features = ["derive"] }
+serde = { version = "1.0.224", features = ["derive"] }
 serde_json = "1.0.142"
 
 [lib]
