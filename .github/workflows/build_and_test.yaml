@@ -48,7 +48,7 @@ jobs:
           command: build
           args: --target ${{ matrix.target }} --release --all-features
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: "tap-consooomer-${{ matrix.target }}"
           path: "target/${{ matrix.target }}/release/tap${{ contains(matrix.target, 'windows') && '.exe' || '' }}"
